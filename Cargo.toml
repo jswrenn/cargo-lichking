@@ -13,7 +13,7 @@ keywords = ["cargo", "licensing"]
 license = "MIT/Apache-2.0"
 
 [dependencies]
-cargo = "0.24"
+cargo = "0.30"
 clap = "2.20"
 regex = "0.2"
 void = "1.0"

@@ -22,7 +22,7 @@ pub fn run(mut packages: Vec<Package>, by: By) -> CargoResult<()> {
             license_to_packages.sort_by_key(|&(license, _)| license);
 
             for (license, packages) in license_to_packages {
-                let packages = packages.iter().map(|package| package.name()).collect::<Vec<&str>>().join(", ");
+                let packages = packages.iter().map(|package| package.name().as_str()).collect::<Vec<&str>>().join(", ");
                 println!("{}: {}", license, packages);
             }
         }

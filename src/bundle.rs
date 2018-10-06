@@ -4,6 +4,7 @@ use std::path::Path;
 
 use cargo::{Config, CargoResult};
 use cargo::core::{Package, Shell};
+use cargo::util::errors;
 
 use license::License;
 use licensed::Licensed;
@@ -29,13 +30,13 @@ pub fn run(roots: &[Package], mut packages: Vec<Package>, config: &Config, varia
             format!("{} package", roots[0].name())
         } else {
             let mut roots_name = String::new();
-            roots_name += roots[0].name();
+            roots_name += &roots[0].name();
             for root in roots.iter().take(roots.len() - 1).skip(1) {
                 roots_name += ", ";
-                roots_name += root.name();
+                roots_name += &root.name();
             }
             roots_name += " and ";
-            roots_name += roots.last().unwrap().name();
+            roots_name += &roots.last().unwrap().name();
             roots_name += " packages";
             roots_name
         }
@@ -102,7 +103,7 @@ pub fn run(roots: &[Package], mut packages: Vec<Package>, config: &Config, varia
     }
 
     if context.missing_license || context.low_quality_license {
-        Err("Generating bundle finished with error(s)")?
+        Err(errors::internal("Generating bundle finished with error(s)"))?
     } else {
         Ok(())
     }
@@ -297,7 +298,7 @@ fn source_package(context: &mut Context, package: &Package, out: &mut io::Write)
 
 fn split_package(context: &mut Context, package: &Package, dir: &Path) -> CargoResult<()> {
     let license = package.license();
-    let mut file = File::create(dir.join(package.name()))?;
+    let mut file = File::create(dir.join(package.name().as_str()))?;
     if let Some(text) = find_generic_license_text(package, &license)? {
         match text.confidence {
             Confidence::Confident => (),

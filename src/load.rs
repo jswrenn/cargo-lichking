@@ -3,18 +3,13 @@ use std::collections::HashSet;
 use cargo::core::dependency::Kind;
 use cargo::core::{ Package, Workspace };
 use cargo::ops;
-use cargo::util::important_paths::find_root_manifest_for_wd;
-use cargo::{ Config, CargoResult };
+use cargo::CargoResult;
 
 use options::SelectedPackage;
 
-pub fn resolve_roots(
-        manifest_path: Option<String>,
-        config: &Config,
+pub fn resolve_roots<'cfg>(
+        workspace: &Workspace<'cfg>,
         package: SelectedPackage) -> CargoResult<Vec<Package>> {
-    let root_manifest = find_root_manifest_for_wd(manifest_path, config.cwd())?;
-    let workspace = Workspace::new(&root_manifest, config)?;
-
     Ok(match package {
         SelectedPackage::All => {
             workspace.members().cloned().collect()
@@ -30,13 +25,9 @@ pub fn resolve_roots(
     })
 }
 
-pub fn resolve_packages<'a, I: IntoIterator<Item=&'a Package>>(
-        manifest_path: Option<String>,
-        config: &Config,
+pub fn resolve_packages<'a, 'cfg, I: IntoIterator<Item=&'a Package>>(
+        workspace: &Workspace<'cfg>,
         roots: I) -> CargoResult<Vec<Package>> {
-    let root_manifest = find_root_manifest_for_wd(manifest_path, config.cwd())?;
-    let workspace = Workspace::new(&root_manifest, config)?;
-
     let (packages, resolve) = ops::resolve_ws(&workspace)?;
 
     let mut result = HashSet::new();

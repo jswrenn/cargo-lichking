@@ -57,7 +57,6 @@ pub enum Cmd {
 pub struct Options {
     pub verbose: u32,
     pub quiet: bool,
-    pub manifest_path: Option<String>,
     pub color: Option<String>,
     pub frozen: bool,
     pub locked: bool,
@@ -232,10 +231,6 @@ impl Options {
             Arg::with_name("quiet")
                 .short("q").long("quiet")
                 .help("Use quiet output"),
-            Arg::with_name("manifest-path")
-                .long("manifest-path")
-                .takes_value(true).value_name("PATH")
-                .help("Path to the manifest to analyze"),
             Arg::with_name("color")
                 .long("color")
                 .takes_value(true).value_name("COLOR")
@@ -284,7 +279,6 @@ impl Options {
         Options {
             verbose: matches.occurrences_of("verbose") as u32,
             quiet: matches.is_present("quiet"),
-            manifest_path: matches.value_of("manifest-path").map(ToOwned::to_owned),
             color: matches.value_of("color").map(ToOwned::to_owned),
             frozen: matches.is_present("frozen"),
             locked: matches.is_present("locked"),
